@@ -34,7 +34,7 @@ mk.delete:
 
 ###Helloworld App
 ## Deploy Helloworld Sample app to test minikube access
-deploy.helloworld: deploy.hw.cmd patch.hw.svc.lb curl.hw.svc
+deploy.helloworld: deploy.hw.cmd curl.hw.svc
 
 deploy.hw.cmd:
 	@kubectl apply -f https://raw.githubusercontent.com/kubernetes/minikube/master/deploy/addons/ingress-dns/example/example.yaml
@@ -58,3 +58,11 @@ curl.hw.svc:
 ## Destroy helloworld Sample app
 destroy.helloworld:
 	@kubectl delete -f https://raw.githubusercontent.com/kubernetes/minikube/master/deploy/addons/ingress-dns/example/example.yaml
+
+###Utils
+## DNS / IP 
+deploy.dnsutils:
+	@kubectl apply -f https://k8s.io/examples/admin/dns/dnsutils.yaml
+
+destroy.dnsutils:
+	@kubectl delete -f https://k8s.io/examples/admin/dns/dnsutils.yaml
