@@ -99,4 +99,4 @@ kubectl krew install stern
 
 - [Learn Kubernetes Basics](https://kubernetes.io/docs/tutorials/kubernetes-basics) | https://kubernetes.io/docs/tutorials/kubernetes-basics
 - [Tail K8s with Stern](https://kubernetes.io/blog/2016/10/tail-kubernetes-with-stern/) | https://kubernetes.io/blog/2016/10/tail-kubernetes-with-stern
-  
+- [LearnCMD Kubernetes 101](https://gitlab.mantelgroup.com.au/cmd/training/kubernetes_101) | https://gitlab.mantelgroup.com.au/cmd/training/kubernetes_101
