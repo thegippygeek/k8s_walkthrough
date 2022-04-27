@@ -118,6 +118,11 @@ deploy.dnsutils:
 undeploy.dnsutils:
 	@kubectl delete -f https://k8s.io/examples/admin/dns/dnsutils.yaml
 
+## Deploy K8s Dashboard Ingress
+deploy.dashboard.ingress:
+	@kubectl apply -f k8s-dashboard.yaml
+	@echo Ingress can be access here: https://k8s.dashboard.test
+
 ## Make Certs - mkcert
 certs.make:
 	@mkcert -install \

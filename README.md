@@ -7,6 +7,14 @@ This is a quick general guide and tools I find useful for managing K8s Clusters.
     - [Minikube](#minikube)
     - [K9s](#k9s)
     - [Stern](#stern)
+  - [Minikube Ingress](#minikube-ingress)
+    - [DNSMasq](#dnsmasq)
+      - [Install](#install)
+      - [Update Config](#update-config)
+      - [Restart Dnsmasq service](#restart-dnsmasq-service)
+      - [Test dnsmasq resolve](#test-dnsmasq-resolve)
+      - [Configure Osx DNS resolving for `.test` domain](#configure-osx-dns-resolving-for-test-domain)
+        - [Testing](#testing)
   - [Learning Resources](#learning-resources)
 
 ## Recommended Tools
@@ -93,6 +101,77 @@ If you use Krew which is the package manager for kubectl plugins, you can instal
 ```bash
 kubectl krew install stern
 ```
+
+## Minikube Ingress
+To access the pods besides running port forwards, we can utilise the minikube addon `ingress`
+
+The following steps need to be done.
+
+1. Setup [`dnsmasq`](https://passingcuriosity.com/2013/dnsmasq-dev-osx/) for test domain resolution
+2. Create local test certs with [`mkcert`](https://github.com/FiloSottile/mkcert) 
+3. run `minikube tunnel` 
+
+### DNSMasq
+
+#### Install
+```bash
+brew install dnsmasq
+```
+#### Update Config
+```bash
+code /opt/homebrew/etc/dnsmasq.conf
+```
+Added the domain "test" to resolve with 127.0.0.1
+```
+address=/test/127.0.0.1
+```
+#### Restart Dnsmasq service
+```bash
+sudo brew services restart dnsmasq
+```
+#### Test dnsmasq resolve
+```bash
+dig testing.testing.one.two.three.dev @127.0.0.1
+```
+
+#### Configure Osx DNS resolving for `.test` domain
+
+OS X also allows you to configure additional resolvers by creating configuration files in the `/etc/resolver/` directory. This directory probably won’t exist on your system, so your first step should be to create it:
+
+```bash
+sudo mkdir -p /etc/resolver
+```
+
+Create the domain file
+```bash
+sudo tee /etc/resolver/test >/dev/null <<EOF
+nameserver 127.0.0.1
+EOF
+```
+
+Once the file is created, OS X will automatically read it.
+##### Testing
+Make sure you haven't broken your DNS
+```bash
+ping -c 1 www.google.com
+```
+Check that the .test name work
+```bash
+ping -c 1 tonys.test
+ping -c 1 this.is.a.test
+```
+You should see results that mention the IP address in your Dnsmasq configuration like this:
+```bash
+PING this.is.a.test (127.0.0.1): 56 data bytes
+64 bytes from 127.0.0.1: icmp_seq=0 ttl=64 time=0.027 ms
+
+--- this.is.a.test ping statistics ---
+1 packets transmitted, 1 packets received, 0.0% packet loss
+round-trip min/avg/max/stddev = 0.027/0.027/0.027/0.000 ms
+```
+
+Using the tool `mkcert` we can create 
+
 
 
 ## Learning Resources
