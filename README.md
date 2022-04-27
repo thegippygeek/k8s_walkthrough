@@ -7,6 +7,10 @@ This is a quick general guide and tools I find useful for managing K8s Clusters.
     - [Minikube](#minikube)
     - [K9s](#k9s)
     - [Stern](#stern)
+  - [Create Minikube Cluster](#create-minikube-cluster)
+  - [Deploy test workloads](#deploy-test-workloads)
+    - [Deploy hello-world](#deploy-hello-world)
+    - [Deploy BlueWhale](#deploy-bluewhale)
   - [Minikube Ingress](#minikube-ingress)
     - [DNSMasq](#dnsmasq)
       - [Install](#install)
@@ -20,6 +24,8 @@ This is a quick general guide and tools I find useful for managing K8s Clusters.
       - [Setup and Create Certs](#setup-and-create-certs)
       - [Add Certs to the cluster](#add-certs-to-the-cluster)
       - [Configure Minikube Ingress Addon to use Custom Certs](#configure-minikube-ingress-addon-to-use-custom-certs)
+  - [Minikube Tunnel](#minikube-tunnel)
+  - [Test Ingress](#test-ingress)
   - [Learning Resources](#learning-resources)
 
 ## Recommended Tools
@@ -107,6 +113,45 @@ If you use Krew which is the package manager for kubectl plugins, you can instal
 kubectl krew install stern
 ```
 
+## Create Minikube Cluster
+Create the minikube cluster
+
+```bash
+make mk.start
+```
+This will create a minikube cluster with the following command with the following vars configured in the Makefile
+
+```bash
+CPUS=4
+MEMORY=6g # in g
+NODES=1
+...
+```
+
+```bash
+minikube start --addons=ingress,ingress-dns,dashboard,metrics-server \
+	--cni=flannel \
+	--install-addons=true \
+    --kubernetes-version=stable \
+    --vm-driver=docker --wait=false \
+    --cpus=$(CPUS) --memory=$(MEMORY) --nodes=$(NODES) \
+    --extra-config=apiserver.service-node-port-range=1-65535 \
+	--embed-certs
+```
+
+## Deploy test workloads
+There are two apps configured and ready for deployment **BlueWhale** and a **hello-world**
+
+### Deploy hello-world
+```bash
+make deploy.helloworld
+```
+
+### Deploy BlueWhale
+```bash
+make deploy.bluewhale
+```
+
 ## Minikube Ingress
 To access the pods besides running port forwards, we can utilise the minikube addon `ingress`
 
@@ -115,6 +160,7 @@ The following steps need to be done.
 1. Setup [`dnsmasq`](https://passingcuriosity.com/2013/dnsmasq-dev-osx/) for test domain resolution
 2. Create local test certs with [`mkcert`](https://github.com/FiloSottile/mkcert) 
 3. run `minikube tunnel` 
+
 
 ### DNSMasq
 
@@ -231,6 +277,22 @@ Stop and restart ingress addon
 ```bash
   minikube addons disable ingress
   minikube addons enable ingress
+```
+
+## Minikube Tunnel
+Start the tunnel 
+```bash
+  minikube tunnel
+```
+
+## Test Ingress
+
+```bash
+curl localhost
+
+Hello, world!
+Version: 1.0.0
+Hostname: hello-world-app-86d5b6469f-rdqrq
 ```
 
 ## Learning Resources

@@ -147,17 +147,16 @@ certs.create:
 	"*.test" \
 	localhost 127.0.0.1 ::1 
 
-## Add certs to Minikube Cluster
-certs.add.mk: certs.make
+certs.del.mk:
 	@kubectl -n kube-system delete secret mkcert
+## Add certs to Minikube Cluster
+certs.add.mk: 
 	@kubectl -n kube-system create secret tls mkcert --key certs/mkcert-key.pem --cert certs/mkcert.pem
 
 ## Verify certs in Cluster
 certs.verify.mk:
-	@kubectl -n ingress-nginx get deployment ingress-nginx-controller  \
-	-o jsonpath="{.spec.template.spec.containers}"  \
-	| jq -r '.[].args' | grep kube-system
-	
+	@kubectl -n ingress-nginx get deployment ingress-nginx-controller  -o jsonpath="{.spec.template.spec.containers}"  | jq -r '.[].args' | grep kube-system
+
 ###NGINX Ingress
 ## Install NGINX Ingress
 nginx.install:
