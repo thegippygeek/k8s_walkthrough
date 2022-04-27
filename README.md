@@ -263,7 +263,6 @@ make certs.add.mk
 
 #### Configure Minikube Ingress Addon to use Custom Certs
 
-
 ```bash
   minikube addons configure ingress
 ```
@@ -293,6 +292,17 @@ curl localhost
 Hello, world!
 Version: 1.0.0
 Hostname: hello-world-app-86d5b6469f-rdqrq
+```
+
+test https and confirm that the issuer is from mkcert 
+```bash
+curl -v https://localhost
+
+...
+*  issuer: O=mkcert development CA; OU=tonyh@Tonys-MacBook-Pro.local (Tony Hallworth); CN=mkcert tonyh@Tonys-MacBook-Pro.local (Tony Hallworth)
+*  SSL certificate verify ok.
+...
+
 ```
 
 ## Learning Resources

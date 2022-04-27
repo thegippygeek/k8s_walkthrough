@@ -59,7 +59,6 @@ awx.get.pod.name:
 	@echo 'podName=$(awxPodName)'
 	kubectl get po $(awxPodName) 
 	
-
 ## awx portforward on port 8052	
 awx.port-forward: 
 	@kubectl port-forward $(awxPodName) 8052:8052 -n awx
