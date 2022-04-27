@@ -992,4 +992,7 @@ metadata:
   name: awx-demo
   namespace: awx
 spec:
-  service_type: nodeport
+  hostname: awx.test
+  ingress_path: /
+  ingress_type: ingress
+  service_type: ClusterIP

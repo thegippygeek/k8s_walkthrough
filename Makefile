@@ -14,7 +14,8 @@ mk.start:
     --kubernetes-version=stable \
     --vm-driver=docker --wait=false \
     --cpus=$(CPUS) --memory=$(MEMORY) --nodes=$(NODES) \
-    --extra-config=apiserver.service-node-port-range=1-65535
+    --extra-config=apiserver.service-node-port-range=1-65535 \
+	--embed-certs
 
 ## Stop minikube cluster
 mk.stop:
@@ -35,7 +36,7 @@ mk.delete:
 ###AWX
 ## deploy AWX Operator to cluster
 awx.deploy.operator:
-	@kustomize build awx | kubectl apply -f -
+	@kustomize build awx -o awx/awx.yaml | kubectl apply -f awx/awx.yaml
 
 ## get awx pods
 awx.get.pods:
@@ -63,29 +64,29 @@ awx.get.logs.manager:
 awx.get.admin.pass:
 	@kubectl get secret awx-demo-admin-password -o jsonpath="{.data.password}" -n awx | base64 --decode
 
-## Change awx svc to LoadBalancer
+###### Change awx svc to LoadBalancer
 patch.awx.svc.lb:
 	@echo "\r\n-- Changing Service from NodePort to LoadBalancer --"
 	@kubectl patch svc awx-demo-service -n awx --type='json' -p '[{"op":"replace","path":"/spec/type","value":"LoadBalancer"}]'
 
-## Change awx svc to NodePort
+###### Change awx svc to NodePort
 patch.awx.svc.np:
 	@echo "\r\n-- Changing Service from LoadBalancer to NodePort --"
 	@kubectl patch svc awx-demo-service -n awx --type='json' -p '[{"op":"replace","path":"/spec/type","value":"NodePort"}]'
 
 ###Helloworld App
-## Deploy Helloworld Sample app to test minikube access
+## Deploy Helloworld Sample app to test minikube ingress access
 deploy.helloworld: deploy.hw.cmd curl.hw.svc
 
 deploy.hw.cmd:
 	@kubectl apply -f https://raw.githubusercontent.com/kubernetes/minikube/master/deploy/addons/ingress-dns/example/example.yaml
 
-## Change Helloword svc to LoadBalancer
+###### Change Helloword svc to LoadBalancer
 patch.hw.svc.lb:
 	@echo "\r\n-- Changing Service from NodePort to LoadBalancer --"
 	@kubectl patch svc hello-world-app --type='json' -p '[{"op":"replace","path":"/spec/type","value":"LoadBalancer"}]'
 
-## Change Helloworld svc to NodePort
+###### Change Helloworld svc to NodePort
 patch.hw.svc.np:
 	@echo "\r\n-- Changing Service from LoadBalancer to NodePort --"
 	@kubectl patch svc hello-world-app --type='json' -p '[{"op":"replace","path":"/spec/type","value":"NodePort"}]'
@@ -100,6 +101,14 @@ curl.hw.svc:
 undeploy.helloworld:
 	@kubectl delete -f https://raw.githubusercontent.com/kubernetes/minikube/master/deploy/addons/ingress-dns/example/example.yaml
 
+###BlueWhale App
+## Deploy BlueWhale Page
+deploy.bluewhale:
+	@kubectl apply -f bluewhale
+
+## Undeploy BlueWhale Page
+undeploy.bluewhale:
+	@kubectl delete -f bluewhale
 ###Utils
 ## deploy dnsutils (DNS / IP / NSLOOKUP) 
 deploy.dnsutils:
@@ -108,6 +117,24 @@ deploy.dnsutils:
 ## Un deploy dnsutils
 undeploy.dnsutils:
 	@kubectl delete -f https://k8s.io/examples/admin/dns/dnsutils.yaml
+
+## Make Certs - mkcert
+certs.make:
+	@mkcert -install \
+	-cert-file certs/mkcert.pem \
+	-key-file certs/mkcert-key.pem \
+	bluewhale.test "*.bluewhale.test" \
+	hello-john.test hello-jane.test \
+	k8s.dashboard.test "*.dashboard.test" \
+	awx.test "*.awx.test" \
+	hw.test "*.hw.test" \
+	"*.test" \
+	localhost 127.0.0.1 ::1 
+
+## Add certs to Minikube 
+certs.add.mk: certs.make
+	@kubectl -n kube-system delete secret mkcert
+	@kubectl -n kube-system create secret tls mkcert --key certs/mkcert-key.pem --cert certs/mkcert.pem
 
 ###NGINX Ingress
 ## Install NGINX Ingress
@@ -120,7 +147,7 @@ nginx.install:
 nginx.uninstall:
 	@helm uninstall ingress-nginx --namespace ingress-nginx
 
-###MetalLB
+### MetalLB
 ## Update ARP for Metallb 
 # see what changes would be made, returns nonzero returncode if different
 metallb.updateARP:

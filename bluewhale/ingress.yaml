@@ -5,15 +5,26 @@ metadata:
   annotations:
     nginx.ingress.kubernetes.io/rewrite-target: /
 spec:
-  ingressClassName: bluewhale
+  ingressClassName: nginx
   rules:
-  - host: bluewhale.info
+  - host: "*.bluewhale.test"
     http:
       paths:
         - backend:
             service:
-              name: hello-blue-whale-app
+              name: hello-blue-whale-svc
               port:
                 number: 80
           path: /
-          pathType: Exact
+          pathType: Prefix
+  - host: bluewhale.test
+    http:
+      paths:
+        - backend:
+            service:
+              name: hello-blue-whale-svc
+              port:
+                number: 80
+          path: /
+          pathType: Prefix
+  

@@ -10,5 +10,7 @@ spec:
     app: hello-blue-whale-app
   type: NodePort
   ports:
-  - port: 80
+  - name: tcp-port
+    port: 80
     targetPort: 80
+    protocol: TCP

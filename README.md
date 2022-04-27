@@ -100,3 +100,6 @@ kubectl krew install stern
 - [Learn Kubernetes Basics](https://kubernetes.io/docs/tutorials/kubernetes-basics) | https://kubernetes.io/docs/tutorials/kubernetes-basics
 - [Tail K8s with Stern](https://kubernetes.io/blog/2016/10/tail-kubernetes-with-stern/) | https://kubernetes.io/blog/2016/10/tail-kubernetes-with-stern
 - [LearnCMD Kubernetes 101](https://gitlab.mantelgroup.com.au/cmd/training/kubernetes_101) | https://gitlab.mantelgroup.com.au/cmd/training/kubernetes_101
+- [DNS Masking](https://passingcuriosity.com/2013/dnsmasq-dev-osx/) | https://passingcuriosity.com/2013/dnsmasq-dev-osx/
+- [Minikube Certs for Ingress](https://minikube.sigs.k8s.io/docs/tutorials/custom_cert_ingress/) | https://minikube.sigs.k8s.io/docs/tutorials/custom_cert_ingress/
+- [mkcert (Create local certs for dev)](https://github.com/FiloSottile/mkcert) | https://github.com/FiloSottile/mkcert

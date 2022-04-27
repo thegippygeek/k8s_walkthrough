@@ -4,4 +4,7 @@ kind: AWX
 metadata:
   name: awx-demo
 spec:
-  service_type: loadbalancer
+  service_type: ClusterIP #loadbalancer
+  ingress_type: ingress
+  ingress_path: /
+  hostname: awx.test
