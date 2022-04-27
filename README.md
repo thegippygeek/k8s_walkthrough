@@ -15,6 +15,11 @@ This is a quick general guide and tools I find useful for managing K8s Clusters.
       - [Test dnsmasq resolve](#test-dnsmasq-resolve)
       - [Configure Osx DNS resolving for `.test` domain](#configure-osx-dns-resolving-for-test-domain)
         - [Testing](#testing)
+    - [MKCERT](#mkcert)
+      - [Install](#install-1)
+      - [Setup and Create Certs](#setup-and-create-certs)
+      - [Add Certs to the cluster](#add-certs-to-the-cluster)
+      - [Configure Minikube Ingress Addon to use Custom Certs](#configure-minikube-ingress-addon-to-use-custom-certs)
   - [Learning Resources](#learning-resources)
 
 ## Recommended Tools
@@ -170,9 +175,63 @@ PING this.is.a.test (127.0.0.1): 56 data bytes
 round-trip min/avg/max/stddev = 0.027/0.027/0.027/0.000 ms
 ```
 
-Using the tool `mkcert` we can create 
+
+### MKCERT
+
+Using the tool `mkcert` we can create localised certs for our cluster.
+
+#### Install 
+```bash
+brew install mkcert
+```
+
+#### Setup and Create Certs
+
+```bash
+mkdir -p certs
+mkcert -install \
+	-cert-file certs/mkcert.pem \
+	-key-file certs/mkcert-key.pem \
+	bluewhale.test "*.bluewhale.test" \
+	hello-john.test hello-jane.test \
+	k8s.dashboard.test "*.dashboard.test" \
+	awx.test "*.awx.test" \
+	hw.test "*.hw.test" \
+	"*.test" \
+	localhost 127.0.0.1 ::1 
+```
+alternatively run the following make commands
+```bash
+ make certs.create
+ ```
+
+#### Add Certs to the cluster
+
+```bash
+kubectl -n kube-system create secret tls mkcert --key certs/mkcert-key.pem --cert certs/mkcert.pem
+```
+alternatively 
+```bash
+make certs.add.mk
+```
+
+#### Configure Minikube Ingress Addon to use Custom Certs
 
 
+```bash
+  minikube addons configure ingress
+```
+at prompt enter *kube-system/mkcert*
+```bash
+  -- Enter custom cert (format is "namespace/secret"): kube-system/mkcert
+  ✅  ingress was successfully configured
+```
+
+Stop and restart ingress addon
+```bash
+  minikube addons disable ingress
+  minikube addons enable ingress
+```
 
 ## Learning Resources
 

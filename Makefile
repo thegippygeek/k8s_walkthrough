@@ -21,6 +21,14 @@ mk.start:
 mk.stop:
 	@minikube stop
 
+## Restart Minikube Ingress addon
+mk.ing.restart: mk.ing.disable mk.ing.enable
+
+mk.ing.disable:
+	@minikube addons disable ingress
+
+mk.ing.enable:
+	@minikube addons enable ingress
 ## Pause minikube cluster
 mk.pause:
 	@minikube pause
@@ -76,11 +84,13 @@ patch.awx.svc.np:
 
 ###Helloworld App
 ## Deploy Helloworld Sample app to test minikube ingress access
-deploy.helloworld: deploy.hw.cmd curl.hw.svc
+deploy.helloworld: deploy.hw.cmd deploy.default.ingress curl.hw.svc
 
 deploy.hw.cmd:
 	@kubectl apply -f https://raw.githubusercontent.com/kubernetes/minikube/master/deploy/addons/ingress-dns/example/example.yaml
 
+deploy.default.ingress:
+	@kubectl apply -f ingress-default.yaml 
 ###### Change Helloword svc to LoadBalancer
 patch.hw.svc.lb:
 	@echo "\r\n-- Changing Service from NodePort to LoadBalancer --"
@@ -119,12 +129,13 @@ undeploy.dnsutils:
 	@kubectl delete -f https://k8s.io/examples/admin/dns/dnsutils.yaml
 
 ## Deploy K8s Dashboard Ingress
-deploy.dashboard.ingress:
+deploy.dash.ing:
 	@kubectl apply -f k8s-dashboard.yaml
 	@echo Ingress can be access here: https://k8s.dashboard.test
 
-## Make Certs - mkcert
-certs.make:
+## Create & Install local dev certs - mkcert
+certs.create:
+	@mkdir -p certs
 	@mkcert -install \
 	-cert-file certs/mkcert.pem \
 	-key-file certs/mkcert-key.pem \
@@ -136,11 +147,17 @@ certs.make:
 	"*.test" \
 	localhost 127.0.0.1 ::1 
 
-## Add certs to Minikube 
+## Add certs to Minikube Cluster
 certs.add.mk: certs.make
 	@kubectl -n kube-system delete secret mkcert
 	@kubectl -n kube-system create secret tls mkcert --key certs/mkcert-key.pem --cert certs/mkcert.pem
 
+## Verify certs in Cluster
+certs.verify.mk:
+	@kubectl -n ingress-nginx get deployment ingress-nginx-controller  \
+	-o jsonpath="{.spec.template.spec.containers}"  \
+	| jq -r '.[].args' | grep kube-system
+	
 ###NGINX Ingress
 ## Install NGINX Ingress
 nginx.install:
@@ -151,15 +168,3 @@ nginx.install:
 ## Uninstall NGINX Ingress
 nginx.uninstall:
 	@helm uninstall ingress-nginx --namespace ingress-nginx
-
-### MetalLB
-## Update ARP for Metallb 
-# see what changes would be made, returns nonzero returncode if different
-metallb.updateARP:
-	@kubectl get configmap kube-proxy -n kube-system -o yaml | \
-	sed -e "s/strictARP: false/strictARP: true/" | \
-	kubectl diff -f - -n kube-system
-# actually apply the changes, returns nonzero returncode on errors only
-	@kubectl get configmap kube-proxy -n kube-system -o yaml | \
-	sed -e "s/strictARP: false/strictARP: true/" | \
-	kubectl apply -f - -n kube-system
