@@ -1,0 +1,34 @@
+---
+- hosts: localhost
+  tasks:
+    - name: create namespace
+      k8s:
+        name: my-namespace
+        api_version: v1
+        kind: Namespace
+        state: present
+    - name: deploy a web server
+      k8s:
+        api_version: v1
+        namespace: my-namespace
+        definition:
+          kind: Deployment
+          metadata:
+            labels:
+              app: nginx
+            name: nginx-deploy
+          spec:
+            replicas: 1
+            selector:
+              matchLabels:
+                app: nginx
+            template:
+              metadata:
+                labels:
+                  app: nginx
+              spec:
+                containers:
+                  - name: my-webserver
+                    image: vamsijakkula/hello-blue-whale:v1
+                    ports:
+                      - containerPort: 80

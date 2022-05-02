@@ -57,7 +57,7 @@ awxPodName=$(shell kubectl -n awx get po -l app.kubernetes.io/component=awx -o j
 awx.get.pod.name: 
 	@eval $$(minikube docker-env)
 	@echo 'podName=$(awxPodName)'
-	kubectl get po $(awxPodName) 
+	kubectl get po $(awxPodName) -n awx
 	
 ## awx portforward on port 8052	
 awx.port-forward: 
@@ -143,6 +143,7 @@ certs.create:
 	k8s.dashboard.test "*.dashboard.test" \
 	awx.test "*.awx.test" \
 	hw.test "*.hw.test" \
+	ipam.test "*.ipam.test" \
 	"*.test" \
 	localhost 127.0.0.1 ::1 
 
