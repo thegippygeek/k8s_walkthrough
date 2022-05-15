@@ -182,7 +182,7 @@ sudo brew services restart dnsmasq
 ```
 #### Test dnsmasq resolve
 ```bash
-dig testing.testing.one.two.three.dev @127.0.0.1
+dig testing.testing.one.two.three.test @127.0.0.1
 ```
 
 #### Configure Osx DNS resolving for `.test` domain
