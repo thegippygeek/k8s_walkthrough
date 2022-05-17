@@ -27,6 +27,9 @@ mk.ing.restart: mk.ing.disable mk.ing.enable
 mk.ing.disable:
 	@minikube addons disable ingress
 
+mk.ing.config:
+	@minikube addons configure ingress
+
 mk.ing.enable:
 	@minikube addons enable ingress
 ## Pause minikube cluster
@@ -104,7 +107,7 @@ patch.hw.svc.np:
 curl.hw.svc:	
 	@echo "\r\n-- Test svc --"
 	@sleep 3
-	@curl localhost
+	@curl hello-john.test
 
 ## Destroy helloworld Sample app
 undeploy.helloworld:
@@ -138,8 +141,10 @@ certs.create:
 	@mkcert -install \
 	-cert-file certs/mkcert.pem \
 	-key-file certs/mkcert-key.pem \
+	canary.test "*.canary.test" \
 	bluewhale.test "*.bluewhale.test" \
 	hello-john.test hello-jane.test \
+	"*.hello-john.test" "*.hello-jane.test" \
 	k8s.dashboard.test "*.dashboard.test" \
 	awx.test "*.awx.test" \
 	hw.test "*.hw.test" \
@@ -167,3 +172,7 @@ nginx.install:
 ## Uninstall NGINX Ingress
 nginx.uninstall:
 	@helm uninstall ingress-nginx --namespace ingress-nginx
+
+## Redirect all http traffic to https
+nginx.http.redirect:
+	@kubectl apply -n ingress-nginx -f nginx_configmap.yaml
