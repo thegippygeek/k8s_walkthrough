@@ -66,6 +66,54 @@ When a pod contains multiple containers Stern can tail all of them too without h
 choco install stern
 ```
 
+### kubectx + kubens
+
+**homepage**: https://github.com/ahmetb/kubectx
+
+kubectx is a tool to switch between contexts (clusters) on kubectl faster.
+kubens is a tool to switch between Kubernetes namespaces (and configure them for kubectl) easily.
+
+```bash
+#switch to another cluster that's in kubeconfig
+$ kubectx minikube
+Switched to context "minikube".
+
+# switch back to previous cluster
+$ kubectx -
+Switched to context "oregon".
+
+# create an alias for the context
+$ kubectx dublin=gke_ahmetb_europe-west1-b_dublin
+Context "dublin" set.
+Aliased "gke_ahmetb_europe-west1-b_dublin" as "dublin".
+
+# change the active namespace on kubectl
+$ kubens kube-system
+Context "test" set.
+Active namespace is "kube-system".
+
+# go back to the previous namespace
+$ kubens -
+Context "test" set.
+Active namespace is "default".
+
+```
+
+#### Install
+
+- MacOS / Linux
+```bash
+brew install kubectx
+```
+
+- Windows
+```bash
+choco install kubens kubectx
+```
+
+
+
+
 ## DNSMasq
 
 **homepage**: https://en.wikipedia.org/wiki/Dnsmasq
