@@ -200,7 +200,7 @@ mkcert -install \
 	-key-file certs/mkcert-key.pem \
 	hello-john.test hello-jane.test \
 	k8s.dashboard.test "*.dashboard.test" \
-	.test "*.test" \
+	"*.test" \
 	localhost 127.0.0.1 ::1 
 ```
 
