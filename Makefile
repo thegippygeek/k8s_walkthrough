@@ -176,3 +176,8 @@ nginx.uninstall:
 ## Redirect all http traffic to https
 nginx.http.redirect:
 	@kubectl apply -n ingress-nginx -f nginx_configmap.yaml
+
+###Hello
+## Arjen
+arjen: 
+	@echo "Hello Arjen"
