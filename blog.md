@@ -16,7 +16,10 @@ In this article I will show you the following:
 
 All you need is Docker (or similarly compatible) container or a Virtual Machine environment. 
 
-> I have tested this solution on a M1 mac with Colima
+> I have tested this solution on the following:  
+>  - M1 mac with Colima
+>  - M1 Mac with Docker for Desktop 
+> 
 
 ## Recommended Tools
 

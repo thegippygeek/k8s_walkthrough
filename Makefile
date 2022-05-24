@@ -142,7 +142,7 @@ certs.create:
 	-cert-file certs/mkcert.pem \
 	-key-file certs/mkcert-key.pem \
 	canary.test "*.canary.test" \
-	bluewhale.test "*.bluewhale.test" \
+	blue.whale.test "*.blue.whale.test" \
 	hello-john.test hello-jane.test \
 	"*.hello-john.test" "*.hello-jane.test" \
 	k8s.dashboard.test "*.dashboard.test" \
