@@ -1,0 +1,25 @@
+apiVersion: kustomize.config.k8s.io/v1beta1
+kind: Kustomization
+
+commonLabels:
+  env: dev
+  owner: tonyh
+  team: whale
+
+namespace: whale
+
+bases:
+- ../../bluewhale
+patchesStrategicMerge:
+  - ingress.yaml
+resources:
+  - deployment.yaml
+  - namespace.yaml
+  - ingress-hello.yaml
+  - ingress-default.yaml
+
+
+images:
+- name: blue-whale-learncmd
+  newName: thegippygeek/hello-cmd-whale
+  newTag: latest

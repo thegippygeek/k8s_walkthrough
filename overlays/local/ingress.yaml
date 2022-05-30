@@ -4,11 +4,10 @@ metadata:
   name: bluewhale-ingress
   annotations:
     nginx.ingress.kubernetes.io/rewrite-target: /
-    external-dns.alpha.kubernetes.io/hostname: bluewhale.sandpit1.learncmd.com.au
 spec:
   ingressClassName: nginx
   rules:
-  - host: "*.bluewhale.sandpit1.learncmd.com.au"
+  - host: "*.blue.whale.test"
     http:
       paths:
         - backend:
@@ -18,7 +17,7 @@ spec:
                 number: 80
           path: /
           pathType: Prefix
-  - host: bluewhale.sandpit1.learncmd.com.au
+  - host: blue.whale.test
     http:
       paths:
         - backend:

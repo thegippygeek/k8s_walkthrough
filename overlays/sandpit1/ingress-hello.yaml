@@ -1,0 +1,59 @@
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: wildcard-ingress
+  namespace: default
+spec:
+  ingressClassName: nginx
+  rules:
+  - host: "*.hello-john.sandpit1.learncmd.com.au"
+    http:
+      paths:
+      - backend:
+          service:
+            name: hello-world-app
+            port:
+              number: 80
+        path: /
+        pathType: Prefix
+  - host: "*.hello-jane.sandpit1.learncmd.com.au"
+    http:
+      paths:
+      - backend:
+          service:
+            name: hello-world-app
+            port:
+              number: 80
+        path: /
+        pathType: Prefix
+---
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: example-ingress
+  namespace: default
+spec:
+  ingressClassName: nginx
+  rules:
+  - host: hello-john.sandpit1.learncmd.com.au
+    http:
+      paths:
+      - backend:
+          service:
+            name: hello-world-app
+            port:
+              number: 80
+        path: /
+        pathType: Prefix
+  - host: hello-jane.sandpit1.learncmd.com.au
+    http:
+      paths:
+      - backend:
+          service:
+            name: hello-world-app
+            port:
+              number: 80
+        path: /
+        pathType: Prefix
+
+

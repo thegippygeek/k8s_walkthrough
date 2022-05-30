@@ -1,0 +1,11 @@
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: default-http-backend
+spec:
+  ingressClassName: nginx
+  defaultBackend:
+    service:
+      name: hello-blue-whale-svc
+      port:
+        number: 80

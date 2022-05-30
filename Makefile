@@ -3,18 +3,21 @@ include Makehelp
 
 CPUS=4
 MEMORY=6g # in g
-NODES=1
+NODES=3
+K8S_VER=1.23.3
 
 ###Cluster
 ## Start minikube cluster 
 mk.start:
-	@minikube start --addons=ingress,ingress-dns,dashboard,metrics-server \
-	--cni=flannel \
+	minikube start \
+	--addons=ingress,ingress-dns,dashboard,metrics-server \
+	--cni=calico \
 	--install-addons=true \
-    --kubernetes-version=stable \
-    --vm-driver=docker --wait=false \
-    --cpus=$(CPUS) --memory=$(MEMORY) --nodes=$(NODES) \
-    --extra-config=apiserver.service-node-port-range=1-65535 \
+	--kubernetes-version=$(K8S_VER) \
+	--vm-driver=docker --wait=false \
+	--cpus $(CPUS) --memory $(MEMORY) --nodes $(NODES) \
+	--extra-config=apiserver.service-node-port-range=1-65535 \
+	--extra-config=apiserver.enable-admission-plugins=NamespaceAutoProvision,NamespaceLifecycle \
 	--embed-certs
 
 ## Stop minikube cluster
@@ -114,13 +117,13 @@ undeploy.helloworld:
 	@kubectl delete -f https://raw.githubusercontent.com/kubernetes/minikube/master/deploy/addons/ingress-dns/example/example.yaml
 
 ###BlueWhale App
-## Deploy BlueWhale Page
-deploy.bluewhale:
-	@kubectl apply -f bluewhale
+## Deploy BlueWhale Page to local
+deploy.bluewhale.local:
+	@kubectl apply -k overlays/local
 
 ## Undeploy BlueWhale Page
-undeploy.bluewhale:
-	@kubectl delete -f bluewhale
+undeploy.bluewhale.local:
+	@kubectl delete -k overlays/local
 ###Utils
 ## deploy dnsutils (DNS / IP / NSLOOKUP) 
 deploy.dnsutils:
@@ -177,7 +180,3 @@ nginx.uninstall:
 nginx.http.redirect:
 	@kubectl apply -n ingress-nginx -f nginx_configmap.yaml
 
-###Hello
-## Arjen
-arjen: 
-	@echo "Hello Arjen"
